@@ -6,6 +6,7 @@ class DB
      * @var \PDO
      */
     private $db;
+    public $type;
 
     /**
      * @param $dbInfo
@@ -13,6 +14,7 @@ class DB
     private function __construct($dbInfo)
     {
         try {
+            $this->db = $dbInfo['type'];
             if($dbInfo['type'] == "mysql") {
                 $this->db = new \PDO(
                     'mysql:host=' . $dbInfo['host'] . ';dbname=' . $dbInfo['database'] . ';charset=utf8',

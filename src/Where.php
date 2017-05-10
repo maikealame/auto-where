@@ -5,7 +5,6 @@ class Where
     private $_auto;
 
     // global config
-    private $db;
     private $table;
 
     // options
@@ -38,15 +37,6 @@ class Where
 
 
 
-    /**
-     * @param string $db
-     *
-     * @return Auto
-     */
-    public function db($db){
-        $this->db = (string) $db;
-        return $this->getInstance();
-    }
     /**
      * @param string $table
      *
@@ -113,11 +103,11 @@ class Where
                     $dbcolumns = [];
 
                     // get dbColumns by querying
-                    if(in_array($this->db, ["mysql"])){
+                    if(in_array($this->_auto->_db->type, ["mysql"])){
                         $dbcolumns = $this->_auto->_db->select("describe ".$this->table);
                         $dbcolumns = json_decode(json_encode($dbcolumns), true);
                     }
-                    if(in_array($this->db, ["pgsql"])) {
+                    if(in_array($this->_auto->_db->type, ["pgsql"])) {
                         $dbcolumns = $this->_auto->_db->select("SELECT column_name as \"Field\", data_type as \"Type\" FROM information_schema.COLUMNS WHERE TABLE_NAME = '".$this->table."'");
                         $dbcolumns = json_decode(json_encode($dbcolumns), true);
                     }
