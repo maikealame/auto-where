@@ -1,0 +1,21 @@
+{
+    "name": "maikealame/AutoWhere",
+    "description": "PHP helper to automatically create sql where conditions",
+    "keywords": ["php","mysql","postgresql","automatic","where"],
+    "license": "MIT",
+    "type": "package",
+    "authors": [
+        {
+            "name": "Maike Alame",
+            "email": "maike.alame@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=7"
+    },
+    "require-dev": {
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
