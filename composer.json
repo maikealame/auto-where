@@ -16,5 +16,10 @@
     },
     "require-dev": {
     },
+    "autoload": {
+        "psr-4": {
+            "PhpAutoWhere\\": "src/"
+        }
+    },
     "minimum-stability": "dev"
 }
