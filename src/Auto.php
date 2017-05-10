@@ -3,9 +3,6 @@
 require_once "Where.php";
 require_once "DB.php";
 
-use Where;
-use DB;
-
 class Auto
 {
     // instance for chain methods
