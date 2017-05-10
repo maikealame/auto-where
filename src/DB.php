@@ -1,4 +1,5 @@
 <?php
+namespace PhpAutoWhere;
 
 class DB
 {
@@ -6,28 +7,26 @@ class DB
      * @var \PDO
      */
     private $db;
-    public $type;
 
     /**
      * @param $dbInfo
      */
-    private function __construct($dbInfo)
+    private function __construct($dbconfig)
     {
         try {
-            $this->db = $dbInfo['type'];
-            if($dbInfo['type'] == "mysql") {
+            if($dbconfig['type'] == "mysql") {
                 $this->db = new \PDO(
-                    'mysql:host=' . $dbInfo['host'] . ';dbname=' . $dbInfo['database'] . ';charset=utf8',
-                    $dbInfo['username'],
-                    $dbInfo['pass']
+                    'mysql:host=' . $dbconfig['host'] . ';dbname=' . $dbconfig['database'] . ';charset=utf8',
+                    $dbconfig['username'],
+                    $dbconfig['pass']
                 );
             }
 
-            if($dbInfo['type'] == "pgsql" || $dbInfo['type'] == "postgres" || $dbInfo['type'] == "postgresql"){
+            if($dbconfig['type'] == "pgsql" || $dbconfig['type'] == "postgres" || $dbconfig['type'] == "postgresql"){
                 $this->db = new \PDO(
-                    'pgsql:dbname=' . $dbInfo['database'] . ';host=' . $dbInfo['host'] . ';',
-                    $dbInfo['username'],
-                    $dbInfo['pass']
+                    'pgsql:dbname=' . $dbconfig['database'] . ';host=' . $dbconfig['host'] . ';',
+                    $dbconfig['username'],
+                    $dbconfig['pass']
                 );
             }
 
@@ -44,11 +43,9 @@ class DB
      * @param  $dbInfo
      * @return DB
      */
-    public static function getConnection()
+    public static function getConnection($dbconfig)
     {
-        if(isset($__auto_config))
-            return new self($__auto_config);
-        return null;
+        return new self($dbconfig);
     }
 
     public function select($sql){

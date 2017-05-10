@@ -1,4 +1,5 @@
 <?php
+namespace PhpAutoWhere;
 
 class Where
 {
@@ -56,7 +57,7 @@ class Where
         return self::getInstance();
     }
     /**
-     * @param array $alias
+     * @param array $or
      *
      * @return Auto
      */
@@ -81,8 +82,8 @@ class Where
 
         $this->q = $this->whereCompleteParser($result);
 
-        if(empty($q)) return null;
-        else return $q;
+        if(empty($this->q)) return null;
+        else return $this->q;
     }
 
 
@@ -123,6 +124,7 @@ class Where
                 }
                 else $dbcolumns = [];
 
+
                 // Loop where columns
                 $result = [];
                 foreach ($where as $key => $value) {
@@ -142,10 +144,12 @@ class Where
                     }
 
 
+
+
                     // find column of loop in table description
                     $type = false;
-                    if(!empty($this::$columns)) if(array_key_exists($key, $this::$columns)) $type = $this::$columns[$key];
-                    if($alias) if(!empty($this::$columns)) if(array_key_exists($keyo, $this::$columns)) $type = $this::$columns[$keyo];
+                    if(!empty($this->columns)) if(array_key_exists($key, $this->columns)) $type = $this->columns[$key];
+                    if($alias) if(!empty($this->columns)) if(array_key_exists($keyo, $this->columns)) $type = $this->columns[$keyo];
                     $dbtype = array_search($key, array_column($dbcolumns, 'Field'));
                     if($type === false && $dbtype === false) continue;
                     if($type === false)
@@ -246,13 +250,12 @@ class Where
                     if($valueArray[0] =="*" && $valueArray[1] =="*"){
                         $q .= "".$key." is not Null";
                     }elseif($valueArray[0] =="*"){
-                        $q .="(" .$key ." <= '".self::parseDatetimeDb($valueArray[1])."')";
+                        $q .="(" .$key ." <= '".self::parseDatetime($valueArray[1], $this->_auto->_config->db_date_format)."')";
                     }elseif($valueArray[1] =="*"){
-                        $q .="(" .$key ." >= '".self::parseDatetimeDb($valueArray[0])."')";
+                        $q .="(" .$key ." >= '".self::parseDatetime($valueArray[0], $this->_auto->_config->db_date_format)."')";
                     }else{
-                        $q .="(" .$key ." BETWEEN '".self::parseDatetimeDb($valueArray[0])."' AND '".self::parseDatetimeDb($valueArray[1])."')";
+                        $q .="(" .$key ." BETWEEN '".self::parseDatetime($valueArray[0], $this->_auto->_config->db_date_format)."' AND '".self::parseDatetime($valueArray[1], $this->_auto->_config->db_date_format)."')";
                     }
-                    //echo $q;
                 }else{
                     $oper = null;
                     if(strpos($value, ">=")!== false){
@@ -272,22 +275,24 @@ class Where
                         $value = str_replace(">","",$value);
                     }
                     if($oper) {
-                        $q .= $key . $oper ." '".self::parseDatetimeDb($value)."'";
+                        $q .= $key . $oper ." '".self::parseDatetime($value, $this->_auto->_config->db_date_format)."'";
                     }else{
-                        $tomorrow = strtotime(self::parseDatetimeDb($value) . " +1 day");
+                        $tomorrow = strtotime(self::parseDatetime($value, $this->_auto->_config->db_date_format) . " +1 day");
                         if(count(explode(" ",$value))>1){ // datetime
                             $tomorrow = date('Y-m-d H:i:s',$tomorrow);
                         }else{ // date
                             $tomorrow = date('Y-m-d',$tomorrow);
                         }
-                        $q .= $key ." >= '".self::parseDatetimeDb($value)."' and ".$key." <= '".$tomorrow."'";
+                        $q .= $key ." >= '".self::parseDatetime($value, $this->_auto->_config->db_date_format)."' and ".$key." <= '".$tomorrow."'";
                     }
                 }
                 break;
             case "between_columns":
+                // todo: separate of "between_columns_date" without cast
+            case "between_columns_date":
                 $keyArray = explode("|",$key);
 
-                $q .= "('" . self::parseDatetimeDb($value) . "' BETWEEN cast(" . $keyArray[0] . " as date) 
+                $q .= "('" . self::parseDatetime($value, $this->_auto->_config->db_date_format) . "' BETWEEN cast(" . $keyArray[0] . " as date) 
                             AND cast(" . $keyArray[1] . " as date) )";
 
                 break;
@@ -296,7 +301,6 @@ class Where
             case "bool":
             case "boolean":
                 $q .=" (";
-                //echo $value = boolval($value);
                 if ($value == false || $value === 'false' || $value == 0 ){
                     $q .=  '('.$key.' = false) OR ('.$key.' IS NULL)';
                 }else{
@@ -444,17 +448,21 @@ class Where
 
     // Helps for data manipulation
 
-    public static function parseDate($date){
+    public static function parseDate($date, $format){
+        if( $format == "d/m/Y" ) return self::parseDate1($date, $format);
+        if( $format == "Y-m-d" ) return self::parseDate2($date, $format);
+        return null;
+    }
+    public static function parseDate1($date, $format){
         if(!$date) return $date;
         if( strpos($date,"/") ) return $date; // format correct
         $date = explode('-',$date);
         $retorno = $date[2]."/".$date[1]."/".$date[0];
         return $retorno;
     }
-    public static function parseDateDb($date){
+    public static function parseDate2($date, $format){
         if(!$date) return $date;
         if( strpos($date,"-") ) return $date; // format correct
-        $retorno = "";
         $date = explode('/',$date);
         if(count($date) > 2) {
             $retorno = $date[2] . "-" . $date[1] . "-" . $date[0];
@@ -464,9 +472,14 @@ class Where
         return $retorno;
     }
 
-    public static function parseDatetime($datetime){
+    public static function parseDatetime($datetime, $format){
+        if( $format == "d/m/Y" ) return self::parseDatetime1($datetime, $format);
+        if( $format == "Y-m-d" ) return self::parseDatetime2($datetime, $format);
+        return null;
+    }
+    public static function parseDatetime1($datetime, $format){
         if(!$datetime) return $datetime;
-        if(!isset(explode(' ',$datetime)[1])) return self::parseDate($datetime);
+        if(!isset(explode(' ',$datetime)[1])) return self::parseDate($datetime, $format);
         if( strpos(explode(' ',$datetime)[0],"/") ) return $datetime; // format correct
         $time = explode(':',explode(' ',$datetime)[1] );
         $date = explode('-', explode(' ',$datetime)[0] );
@@ -474,9 +487,9 @@ class Where
         if($time[2] != "00") $retorno .= ":".$time[2];
         return $retorno;
     }
-    public static function parseDatetimeDb($datetime){
+    public static function parseDatetime2($datetime, $format){
         if(!$datetime) return $datetime;
-        if(!isset(explode(' ',$datetime)[1])) return self::parseDateDb($datetime);
+        if(!isset(explode(' ',$datetime)[1])) return self::parseDate($datetime, $format);
         if( strpos(explode(' ',$datetime)[0],"-") ) return $datetime; // format correct
         $time = explode(' ',$datetime)[1];
         $date = explode('/', explode(' ',$datetime)[0] );

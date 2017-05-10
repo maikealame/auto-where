@@ -1,12 +1,17 @@
 <?php
+namespace PhpAutoWhere;
 
-require_once "Where.php";
-require_once "DB.php";
+include('DB.php');
+include('Where.php');
+
+use PhpAutoWhere\Where;
+use PhpAutoWhere\DB;
 
 class Auto
 {
     public $_core = "laravel";
     public $_class;
+    public $_config = __auto_config;
     public $_db;
     public $_dbtype;
 
@@ -18,8 +23,9 @@ class Auto
      * Constructor
      */
     public function __construct(){
-        $this->_db = DB::getConnection();
-        $this->_dbtype = $this->_db->type;
+        $this->_config = (object) $this->_config;
+        $this->_db = DB::getConnection($this->_config->db);
+        $this->_dbtype = $this->_config->db['type'];
 
         if ($this->_instance === null) $this->_instance = $this;
     }

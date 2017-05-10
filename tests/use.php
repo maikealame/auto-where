@@ -3,5 +3,5 @@
 require "../auto_config.php";
 
 print_r(
-    Auto::where()->table("ticket")->render(["id"=>1])
+    PhpAutoWhere\Auto::where()->table("ticket")->columns(['id'=>'text'])->render(["id"=>1])
 );
