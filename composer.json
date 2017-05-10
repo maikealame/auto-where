@@ -1,5 +1,5 @@
 {
-    "name": "maikealame/AutoWhere",
+    "name": "maikealame/auto-where",
     "description": "PHP helper to automatically create sql where conditions",
     "keywords": ["php","mysql","postgresql","automatic","where"],
     "license": "MIT",
