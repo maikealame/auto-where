@@ -103,11 +103,11 @@ class Where
                     $dbcolumns = [];
 
                     // get dbColumns by querying
-                    if(in_array($this->_auto->_db->type, ["mysql"])){
+                    if(in_array($this->_auto->_dbtype, ["mysql"])){
                         $dbcolumns = $this->_auto->_db->select("describe ".$this->table);
                         $dbcolumns = json_decode(json_encode($dbcolumns), true);
                     }
-                    if(in_array($this->_auto->_db->type, ["pgsql"])) {
+                    if(in_array($this->_auto->_dbtype, ["pgsql"])) {
                         $dbcolumns = $this->_auto->_db->select("SELECT column_name as \"Field\", data_type as \"Type\" FROM information_schema.COLUMNS WHERE TABLE_NAME = '".$this->table."'");
                         $dbcolumns = json_decode(json_encode($dbcolumns), true);
                     }

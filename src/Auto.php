@@ -10,12 +10,15 @@ class Auto
 
     public $_class;
     public $_db;
+    public $_dbtype;
 
     /**
      * Constructor
      */
     public function __construct(){
         $this->_db = DB::getConnection();
+        $this->_dbtype = $this->_db->type;
+
         if ($this->_instance === null) $this->_instance = $this;
     }
 
