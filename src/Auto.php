@@ -5,12 +5,14 @@ require_once "DB.php";
 
 class Auto
 {
-    // instance for chain methods
-    public $_instance = null;
-
+    public $_core = "laravel";
     public $_class;
     public $_db;
     public $_dbtype;
+
+    // instance for chain methods
+    public $_instance = null;
+
 
     /**
      * Constructor
