@@ -19,9 +19,9 @@ class Where
     /**
      * Constructor
      *
-     * @param Auto $core
+     * @param mixed $core
      */
-    public function __construct(Auto $core){
+    public function __construct($core){
         $this->_auto = $core;
     }
 
@@ -30,7 +30,7 @@ class Where
     /**
      * Generate chain methods
      *
-     * @return Auto
+     * @return mixed
      */
     private function getInstance(){
         return $this->_auto->getInstance();
@@ -41,7 +41,7 @@ class Where
     /**
      * @param string $table
      *
-     * @return Auto
+     * @return mixed
      */
     public function table($table){
         $this->table = (string) $table;
@@ -50,7 +50,7 @@ class Where
     /**
      * @param array $columns
      *
-     * @return Auto
+     * @return mixed
      */
     public function columns($columns){
         if(is_array($columns)) $this->columns = $columns;
@@ -59,7 +59,7 @@ class Where
     /**
      * @param array $or
      *
-     * @return Auto
+     * @return mixed
      */
     public function or($or){
         if(is_array($or)) $this->or = $or;
@@ -68,7 +68,11 @@ class Where
 
 
 
-
+    /**
+     * @param array $where
+     *
+     * @return string
+     */
     public function render($where){
         if(is_array($this->table)){
             $result = [];
