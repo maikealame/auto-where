@@ -61,7 +61,7 @@ class Where
      *
      * @return mixed
      */
-    public function or($or){
+    public function _or($or){
         if(is_array($or)) $this->or = $or;
         return self::getInstance();
     }

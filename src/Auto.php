@@ -45,6 +45,10 @@ class Auto
         if($this->_class) {
             if (method_exists($this->_class, $method)) {
                 return call_user_func_array(array($this->_class, $method), $arguments);
+            }elseif( $method == "or"){ // Keyword reserved of php
+
+                return call_user_func_array(array($this->_class, "_or"), $arguments);
+
             }else return $this;
         }else{
             return call_user_func_array(array($this, $method), $arguments);
