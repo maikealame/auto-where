@@ -44,7 +44,7 @@ class Where
      * @return mixed
      */
     public function table($table){
-        $this->table = (string) $table;
+        $this->table = $table;
         return $this->getInstance();
     }
     /**
@@ -110,11 +110,11 @@ class Where
 
                     // get dbColumns by querying
                     if(in_array($this->_auto->_dbtype, ["mysql"])){
-                        $dbcolumns = $this->_auto->_db->select("describe ".$this->table);
+                        $dbcolumns = $this->_auto->_db->select("describe ".$table);
                         $dbcolumns = json_decode(json_encode($dbcolumns), true);
                     }
                     if(in_array($this->_auto->_dbtype, ["pgsql"])) {
-                        $dbcolumns = $this->_auto->_db->select("SELECT column_name as \"Field\", data_type as \"Type\" FROM information_schema.COLUMNS WHERE TABLE_NAME = '".$this->table."'");
+                        $dbcolumns = $this->_auto->_db->select("SELECT column_name as \"Field\", data_type as \"Type\" FROM information_schema.COLUMNS WHERE TABLE_NAME = '".$table."'");
                         $dbcolumns = json_decode(json_encode($dbcolumns), true);
                     }
 
@@ -535,7 +535,7 @@ class Where
             strtolower($value) == "sim" || $value == 1 || $value == "1" || $value == 'on') return true;
         else return false;
 
-      }
+    }
 
 }
 ?>
