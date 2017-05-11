@@ -83,6 +83,7 @@ class Where
         }else {
             $result = $this->whereComplete($where);
         }
+        if($result == null) return " true ";
 
         $this->q = $this->whereCompleteParser($result);
 
@@ -534,7 +535,7 @@ class Where
             strtolower($value) == "sim" || $value == 1 || $value == "1" || $value == 'on') return true;
         else return false;
 
-    }
+      }
 
 }
 ?>
