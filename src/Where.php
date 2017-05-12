@@ -235,6 +235,10 @@ class Where
             case "character":
                 $q .= "(UPPER(".$key .") LIKE '%".mb_strtoupper($value)."%')";
                 break;
+            case "equal":
+                $q .= "(".$key ." = '".$value."')";
+                break;
+            case "string_equal":
             case "text_equal":
                 $q .= "(UPPER(".$key .") = '".mb_strtoupper($value)."')";
                 break;
