@@ -204,22 +204,22 @@ class Where
             case "double":
             case "double precision":
 
-                //echo $value[0] . "aaaa".$value;
-                //echo strpos($value, "a")."----".$value;
-
-                if (strpos($value, ",") || strpos($value, ".")) $value = str_replace(',', '.', str_replace('.', '', $value));
+                // numeric float parser
+                if (strpos($value, ",") || strpos($value, ".")){
+                    $value = $this::numericToDB($value);
+                }
 
                 if (strpos($value, ":") !== false){ // number range [0] e [1]
                     $valueArray = explode(":",$value);
                     if($valueArray[0] <= $valueArray[1])
-                        $q .="(" .$key ." BETWEEN ".$valueArray[0]." AND ".$valueArray[1].")";
+                        $q .="(" .$key ." BETWEEN ".$this::getOnlyNumber($valueArray[0])." AND ".$this::getOnlyNumber($valueArray[1]).")";
                 }else{
-                    if (strpos($value, ">") !== false){ // number [0] bigger than [1]
-                        $value = str_replace(">", "", $value);
-                        $q .=$key ." >".$value."";
+                    if (strpos($value, ">") !== false && strpos($value, "<") !== false){
+                        $q .=$key ." <>".$this::getOnlyNumber($value)."";
+                    }elseif (strpos($value, ">") !== false){ // number [0] bigger than [1]
+                        $q .=$key ." >".$this::getOnlyNumber($value)."";
                     }else if (strpos($value, "<") !== false){ // number [1] bigger than [0]
-                        $value = str_replace("<", "", $value);
-                        $q .=$key ." <".$value."";
+                        $q .=$key ." <".$this::getOnlyNumber($value)."";
                     }else{ // number only
                         $q .=$key ." = ".$value."";
                     }
@@ -535,6 +535,11 @@ class Where
             strtolower($value) == "sim" || $value == 1 || $value == "1" || $value == 'on') return true;
         else return false;
 
+    }
+
+    public static function getOnlyNumber($value){
+        $value = preg_replace("/[^0-9.]/", "",$value);
+        return $value;
     }
 
 }
