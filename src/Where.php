@@ -168,7 +168,20 @@ class Where
                         $key = $keyo;
                     }
 
-                    $result[$key] = self::whereCompleteProcess($value, $key, $type);
+
+                    if( is_array($value) ){ // array values parse: ( [0] or [1] or [2] ... )
+
+                        $valueArr = [];
+                        foreach ($value as $v) {
+                            $valueArr[] = self::whereCompleteProcess($v, $key, $type);
+                        }
+                        $result[$key] = " (".implode(" or ",$valueArr).") ";
+
+                    }else {
+
+                        $result[$key] = self::whereCompleteProcess($value, $key, $type);
+
+                    }
 
                 }//foreach
 
