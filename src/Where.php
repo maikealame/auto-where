@@ -168,7 +168,6 @@ class Where
                         $key = $keyo;
                     }
 
-
                     if( is_array($value) ){ // array values parse: ( [0] or [1] or [2] ... )
 
                         $valueArr = [];
@@ -296,8 +295,11 @@ class Where
                         $oper = ">";
                         $value = str_replace(">","",$value);
                     }
+                    if($type == "time"){
+                        $oper = "=";
+                    }
                     if($oper) {
-                        $q .= $key . $oper ." '".self::parseDatetime($value, $this->_auto->_config->db_date_format)."'";
+                        $q .= $key . " " . $oper ." '".self::parseDatetime($value, $this->_auto->_config->db_date_format)."'";
                     }else{
                         $tomorrow = strtotime(self::parseDatetime($value, $this->_auto->_config->db_date_format) . " +1 day");
                         if(count(explode(" ",$value))>1){ // datetime
@@ -364,10 +366,6 @@ class Where
 //            }
         }
 
-//        dd($this->or);
-//        dd($result);
-//        dd($sql);
-
         // transform array to sql
         if( count($this->or) ){
             $or = [];
@@ -399,8 +397,7 @@ class Where
 
             }
 
-//            dd($or);
-//            dd($result);
+
 
             if(count($result)){
                 $sql .= implode(" AND ", $result);
@@ -424,7 +421,6 @@ class Where
                 $sql .= ")";
             }
 
-//            dd($sql);
 
         }else{
             $sql = implode(" AND ", $result);
@@ -495,13 +491,16 @@ class Where
     }
 
     public static function parseDatetime($datetime, $format){
+        if(!isset(explode(' ',$datetime)[1])){
+            if(strpos($datetime,":") !== false) return $datetime; // is hours
+            return self::parseDate($datetime, $format);
+        }
         if( $format == "d/m/Y" ) return self::parseDatetime1($datetime, $format);
         if( $format == "Y-m-d" ) return self::parseDatetime2($datetime, $format);
         return null;
     }
     public static function parseDatetime1($datetime, $format){
         if(!$datetime) return $datetime;
-        if(!isset(explode(' ',$datetime)[1])) return self::parseDate($datetime, $format);
         if( strpos(explode(' ',$datetime)[0],"/") ) return $datetime; // format correct
         $time = explode(':',explode(' ',$datetime)[1] );
         $date = explode('-', explode(' ',$datetime)[0] );
@@ -511,7 +510,6 @@ class Where
     }
     public static function parseDatetime2($datetime, $format){
         if(!$datetime) return $datetime;
-        if(!isset(explode(' ',$datetime)[1])) return self::parseDate($datetime, $format);
         if( strpos(explode(' ',$datetime)[0],"-") ) return $datetime; // format correct
         $time = explode(' ',$datetime)[1];
         $date = explode('/', explode(' ',$datetime)[0] );
