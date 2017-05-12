@@ -279,6 +279,9 @@ class Where
                     }
                 }else{
                     $oper = null;
+                    if($type == "time"){
+                        $oper = "=";
+                    }
                     if(strpos($value, ">=")!== false){
                         $oper = ">=";
                         $value = str_replace(">=","",$value);
@@ -294,9 +297,6 @@ class Where
                     if(strpos($value, ">")!== false){
                         $oper = ">";
                         $value = str_replace(">","",$value);
-                    }
-                    if($type == "time"){
-                        $oper = "=";
                     }
                     if($oper) {
                         $q .= $key . " " . $oper ." '".self::parseDatetime($value, $this->_auto->_config->db_date_format)."'";
