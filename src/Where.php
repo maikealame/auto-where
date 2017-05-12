@@ -318,7 +318,7 @@ class Where
                 $q .= ")";
                 break;
             case "null":
-                if($value)
+                if(boolval($value) && !empty($value) && !is_null($value))
                     $q .= " ".$key." IS NULL";
                 else
                     $q .= " ".$key." IS NOT NULL";
