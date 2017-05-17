@@ -166,19 +166,26 @@ class Where
                     // revert $key with alias
                     if($alias) {
                         $key = $keyo;
+                        $col = $key;
+                    }else{
+                        $col = explode("|",$key);
+                        foreach ($col as $k=>$v) {
+                            $col[$k] = $table.".".$v;
+                        }
+                        $col = implode("|",$col);
                     }
 
                     if( is_array($value) ){ // array values parse: ( [0] or [1] or [2] ... )
 
                         $valueArr = [];
                         foreach ($value as $v) {
-                            $valueArr[] = self::whereCompleteProcess($v, $key, $type);
+                            $valueArr[] = self::whereCompleteProcess($v, $col, $type);
                         }
                         $result[$key] = " (".implode(" or ",$valueArr).") ";
 
                     }else {
 
-                        $result[$key] = self::whereCompleteProcess($value, $key, $type);
+                        $result[$key] = self::whereCompleteProcess($value, $col, $type);
 
                     }
 
@@ -194,6 +201,7 @@ class Where
         else{
             // not exists where param
         }
+
 
         return $q;
     }
