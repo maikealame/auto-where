@@ -276,11 +276,11 @@ class Where
             case "timestamp with time zone":
                 if (strpos($value, "|") !== false){
                     $valueArray = explode("|",$value);
-                    if($valueArray[0] =="*" && $valueArray[1] =="*"){
+                    if($valueArray[0] == "" && $valueArray[1] == ""){
                         $q .= "".$key." is not Null";
-                    }elseif($valueArray[0] =="*"){
+                    }elseif($valueArray[0] == ""){
                         $q .="(" .$key ." <= '".self::parseDatetime($valueArray[1], $this->_auto->_config->db_date_format)."')";
-                    }elseif($valueArray[1] =="*"){
+                    }elseif($valueArray[1] == ""){
                         $q .="(" .$key ." >= '".self::parseDatetime($valueArray[0], $this->_auto->_config->db_date_format)."')";
                     }else{
                         $q .="(" .$key ." BETWEEN '".self::parseDatetime($valueArray[0], $this->_auto->_config->db_date_format)."' AND '".self::parseDatetime($valueArray[1], $this->_auto->_config->db_date_format)."')";
