@@ -224,10 +224,8 @@ class Where
             case "double":
             case "double precision":
 
-                // numeric float parser
-                if (strpos($value, ",") || strpos($value, ".")){
-                    $value = $this::numericToDB($value);
-                }
+                // numeric parser
+                $value = $this::numericToDB($value);
 
                 if (strpos($value, ":") !== false){ // number range [0] e [1]
                     $valueArray = explode(":",$value);
@@ -276,11 +274,11 @@ class Where
             case "timestamp with time zone":
                 if (strpos($value, "|") !== false){
                     $valueArray = explode("|",$value);
-                    if($valueArray[0] == "" && $valueArray[1] == ""){
+                    if($valueArray[0] =="*" && $valueArray[1] =="*"){
                         $q .= "".$key." is not Null";
-                    }elseif($valueArray[0] == ""){
+                    }elseif($valueArray[0] =="*"){
                         $q .="(" .$key ." <= '".self::parseDatetime($valueArray[1], $this->_auto->_config->db_date_format)."')";
-                    }elseif($valueArray[1] == ""){
+                    }elseif($valueArray[1] =="*"){
                         $q .="(" .$key ." >= '".self::parseDatetime($valueArray[0], $this->_auto->_config->db_date_format)."')";
                     }else{
                         $q .="(" .$key ." BETWEEN '".self::parseDatetime($valueArray[0], $this->_auto->_config->db_date_format)."' AND '".self::parseDatetime($valueArray[1], $this->_auto->_config->db_date_format)."')";
@@ -535,9 +533,16 @@ class Where
 
 
     public static function numericToDB($value){
-        $value = preg_replace("/[^0-9.,-]/", '',  $value);
+        // numeric float parser
+        if (strpos($value, ":")) {
+            $value = explode(":",$value);
+            $value[0] = self::numericToDB($value[0]);
+            $value[1] = self::numericToDB($value[1]);
+            return implode(":",$value);
+        }
+        $value = preg_replace("/[^0-9.,-<>=]/", '',  $value);
         if(substr_count($value, '.') > 1) $value = str_replace('.', '', $value);
-        $value = floatval(str_replace(',', '.', $value));
+        $value = str_replace(',', '.', $value);
         return $value;
     }
     public static function formatNumeric($value){
