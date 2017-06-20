@@ -53,7 +53,7 @@ class Where
      * @return mixed
      */
     public function columns($columns){
-        if(is_array($columns)) $this->columns = $columns;
+        if(is_array($columns)) $this->columns = array_merge($this->columns,$columns);
         return self::getInstance();
     }
     /**
@@ -62,7 +62,7 @@ class Where
      * @return mixed
      */
     public function _or($or){
-        if(is_array($or)) $this->or = $or;
+        if(is_array($or)) $this->or = array_merge($this->or,$or);
         return self::getInstance();
     }
 
@@ -252,6 +252,9 @@ class Where
             case "character varying":
             case "character":
                 $q .= "(UPPER(".$key .") LIKE '%".mb_strtoupper($value)."%')";
+                break;
+            case "number_equal":
+                $q .= "(".$key ." = ".$value.")";
                 break;
             case "equal":
                 $q .= "(".$key ." = '".$value."')";
