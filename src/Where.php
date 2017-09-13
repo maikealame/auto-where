@@ -251,16 +251,19 @@ class Where
             case "char()":
             case "character varying":
             case "character":
-                $q .= "(UPPER(".$key .") LIKE '%".mb_strtoupper($value)."%')";
+                $value = $this->formatText($value);
+                $q .= "(UPPER(".$key .") LIKE '%".$value."%')";
                 break;
             case "number_equal":
                 $q .= "(".$key ." = ".$value.")";
                 break;
             case "equal":
+                $value = $this->formatText($value);
                 $q .= "(".$key ." = '".$value."')";
                 break;
             case "string_equal":
             case "text_equal":
+                $value = $this->formatText($value);
                 $q .= "(UPPER(".$key .") = '".mb_strtoupper($value)."')";
                 break;
             case "select":
@@ -573,5 +576,11 @@ class Where
         return $value;
     }
 
+
+    private function formatText($value){
+        $value = htmlentities($value);
+        $value = str_replace("'","''", $value);
+        return mb_strtoupper($value);
+    }
 }
 ?>
