@@ -578,7 +578,8 @@ class Where
 
 
     private function formatText($value){
-        $value = htmlentities($value);
+//        removed because getting charset error when with accents ú = &acute;
+//        $value = htmlentities($value);
         $value = str_replace("'","''", $value);
         return mb_strtoupper($value);
     }
