@@ -252,7 +252,8 @@ class Where
             case "character varying":
             case "character":
                 $value = $this->formatText($value);
-                $q .= "(UPPER(".$key .") LIKE '%".$value."%')";
+                $aux = empty($value) ? "OR $key IS NULL" : "";
+                $q .= "(UPPER($key) LIKE '%$value%' $aux)";
                 break;
             case "number_equal":
                 $q .= "(".$key ." = ".$value.")";
