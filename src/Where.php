@@ -346,8 +346,10 @@ class Where
             case "bool":
             case "boolean":
                 $q .=" (";
-                if ($value == false || $value === 'false' || $value === 0 || $value === '0' ){
-                    $q .=  '('.$key.' = false) OR ('.$key.' IS NULL)';
+                if ($value == false || $value === 'false' || $value === 0 || $value === '0' ) {
+                    $q .= '(' . $key . ' = false)';
+                }else if(is_null($value) && is_empty($value)){
+                    $q .=  '('.$key.' IS NULL)';
                 }else{
                     $q .= $key.' = true';
                 }
