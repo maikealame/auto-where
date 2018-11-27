@@ -209,10 +209,10 @@ class Where
     private function whereCompleteProcess($value, $key, $type){
         $q = "";
         
-        if ($value == '??') { // null command
+        if ($value === '??') { // null command
             $q .= "(" . $key . " IS NULL " . ")";
         }
-        if ($value == '!!') { // not null command
+        if ($value === '!!') { // not null command
             $q .= "(" . $key . " IS NOT NULL " . ")";
         }
 
