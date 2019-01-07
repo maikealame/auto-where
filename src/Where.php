@@ -328,7 +328,7 @@ class Where
                         }else{ // date
                             $tomorrow = date('Y-m-d',$tomorrow);
                         }
-                        $q .= $key ." >= '".self::parseDatetime($value, $this->_auto->_config->db_date_format)."' and ".$key." <= '".$tomorrow."'";
+                        $q .= $key ." >= '".self::parseDatetime($value, $this->_auto->_config->db_date_format)."' and ".$key." < '".$tomorrow."'";
                     }
                 }
                 break;
