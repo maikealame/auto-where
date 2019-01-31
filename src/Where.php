@@ -287,6 +287,9 @@ class Where
             case "timestamp":
             case "timestamp without time zone":
             case "timestamp with time zone":
+                while (strpos($value, "&") !== false){
+                    $value = str_replace("&", date($this->_auto->_config->db_date_format), $value);
+                }
                 if (strpos($value, "|") !== false){
                     $valueArray = explode("|",$value);
                     if($valueArray[0] =="*" && $valueArray[1] =="*"){
