@@ -267,7 +267,7 @@ class Where
                 $q .= "(".$key ." = ".$value.")";
                 break;
             case "equal":
-                $value = $this->formatText($value);
+                $value = $this->formatText($value, false);
                 $q .= "(".$key ." = '".$value."')";
                 break;
             case "string_equal":
@@ -531,7 +531,7 @@ class Where
         $time = explode(':',explode(' ',$datetime)[1] );
         $date = explode('-', explode(' ',$datetime)[0] );
         $retorno = $date[2]."/".$date[1]."/".$date[0]." ".$time[0].":".$time[1];
-        if($time[2] != "00") $retorno .= ":".$time[2];
+        if($time[2] && $time[2] != "") $retorno .= ":".$time[2];
         return $retorno;
     }
     public static function parseDatetime2($datetime, $format){
@@ -591,11 +591,11 @@ class Where
     }
 
 
-    private function formatText($value){
+    private function formatText($value, $toUpper = true){
 //        removed because getting charset error when with accents ú = &acute;
 //        $value = htmlentities($value);
         $value = str_replace("'","''", $value);
-        return mb_strtoupper($value);
+        return $toUpper ? mb_strtoupper($value) : $value;
     }
 }
 ?>
