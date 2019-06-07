@@ -359,7 +359,7 @@ class Where
                 $q .= ")";
                 break;
             case "null":
-                if(boolval($value) && !empty($value) && !is_null($value) && !in_array(["false","FALSE"],$value))
+                if(boolval($value) && !empty($value) && !is_null($value) && !in_array($value,["false","FALSE"]))
                     $q .= " ".$key." IS NULL";
                 else
                     $q .= " ".$key." IS NOT NULL";
