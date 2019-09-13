@@ -224,6 +224,7 @@ class Where
             case "integer()":
             case "decimal":
             case "decimal()":
+            case "decimal(,)":
             case "number":
             case "bigint":
             case "money":
